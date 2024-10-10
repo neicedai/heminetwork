@@ -5,8 +5,26 @@
 version: "3"
 
 services:
+  bitcoind:
+    image: "kylemanna/bitcoind@sha256:5d97bbe3c74856818f0b3a1e718eb3968981ab03ce08aaf1c7d528f99aaf30b7"
+    command:
+      - "bitcoind"
+      - "-testnet=1"
+      - "-rpcuser=user"
+      - "-rpcpassword=password"
+      - "-rpcallowip=0.0.0.0/0"
+      - "-rpcbind=0.0.0.0:18443"
+      - "-txindex=1"
+    ports:
+      - "18443:18443"
+      - "18444:18444"
+    volumes:
+      - { type: "tmpfs", target: "/root/.bitcoin" }
+
   bitcoind-initialblocks:
     image: "kylemanna/bitcoind@sha256:5d97bbe3c74856818f0b3a1e718eb3968981ab03ce08aaf1c7d528f99aaf30b7"
+    depends_on:
+      - "bitcoind"
     command:
       - "bitcoin-cli"
       - "-testnet=1"
@@ -24,6 +42,8 @@ services:
     deploy:
       restart_policy:
         condition: "any"
+    depends_on:
+      - "bitcoind"
     command:
       - "bitcoin-cli"
       - "-testnet=1"
@@ -38,14 +58,16 @@ services:
   electrs:
     build:
       context: https://github.com/romanz/electrs.git#1d02f10ec38edbc3b7df6b16bb8989d9bc0aaa0f
-  command:
+    depends_on:
+      - "bitcoind"
+    command:
       - electrs
       - --electrum-rpc-addr
       - '0.0.0.0:50001'
       - --daemon-rpc-addr
       - "bitcoind:18443"
       - --daemon-p2p-addr
-      - "bitcoind:18333"
+      - "bitcoind:18444"
       - --network
       - testnet
       - --cookie-file
