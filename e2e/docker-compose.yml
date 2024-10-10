@@ -67,7 +67,7 @@ services:
       - --daemon-rpc-addr
       - "bitcoind:18443"
       - --daemon-p2p-addr
-      - "bitcoind:18444"
+      - "bitcoind:18333"
       - --network
       - testnet
       - --cookie-file
