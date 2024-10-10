@@ -19,7 +19,7 @@ services:
       - "18443:18443"
       - "18444:18444"
     volumes:
-      - /data:/root/.bitcoin
+      - /data:/bitcoin/.bitcoin
 
   bitcoind-initialblocks:
     image: "kylemanna/bitcoind@sha256:5d97bbe3c74856818f0b3a1e718eb3968981ab03ce08aaf1c7d528f99aaf30b7"
