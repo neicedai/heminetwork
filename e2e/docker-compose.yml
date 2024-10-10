@@ -7,8 +7,6 @@ version: "3"
 services:
   bitcoind-initialblocks:
     image: "kylemanna/bitcoind@sha256:5d97bbe3c74856818f0b3a1e718eb3968981ab03ce08aaf1c7d528f99aaf30b7"
-    depends_on:
-      - "bitcoind"
     command:
       - "bitcoin-cli"
       - "-testnet=1"
@@ -26,8 +24,6 @@ services:
     deploy:
       restart_policy:
         condition: "any"
-    depends_on:
-      - "bitcoind"
     command:
       - "bitcoin-cli"
       - "-testnet=1"
