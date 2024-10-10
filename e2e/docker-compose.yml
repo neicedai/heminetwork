@@ -17,7 +17,7 @@ services:
       - "-txindex=1"
     ports:
       - "18443:18443"
-      - "18333:18333"
+      - "18444:18333"
     volumes:
       - /data:/bitcoin/.bitcoin
 
@@ -67,7 +67,7 @@ services:
       - --daemon-rpc-addr
       - "bitcoind:18443"
       - --daemon-p2p-addr
-      - "bitcoind:18333"
+      - "bitcoind:18444"
       - --network
       - testnet
       - --cookie-file
