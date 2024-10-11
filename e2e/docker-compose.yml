@@ -5,24 +5,7 @@
 version: "3"
 
 services:
-  bitcoind:
-    image: "kylemanna/bitcoind@sha256:5d97bbe3c74856818f0b3a1e718eb3968981ab03ce08aaf1c7d528f99aaf30b7"
-    command:
-      - "bitcoind"
-      - "-testnet=1"
-      - "-rpcuser=user"
-      - "-rpcpassword=password"
-      - "-rpcallowip=0.0.0.0/0"
-      #- "-bind=127.0.0.1:18445=onion"
-      - "-rpcbind=0.0.0.0:18443"
-      - "-port=18444"
-      - "-txindex=1"
-    ports:
-      - "18443:18443"
-      - "18444:18444"
-    volumes:
-      - /data:/bitcoin/.bitcoin
-
+  
   electrs:
     build:
       context: https://github.com/romanz/electrs.git#1d02f10ec38edbc3b7df6b16bb8989d9bc0aaa0f
@@ -33,9 +16,9 @@ services:
       - --electrum-rpc-addr
       - '0.0.0.0:50001'
       - --daemon-rpc-addr
-      - "bitcoind:18443"
+      - "localhost:8082"
       - --daemon-p2p-addr
-      - "bitcoind:18444"
+      - "localhost:8082"
       - --network
       - testnet
       - --cookie-file
@@ -64,51 +47,7 @@ services:
     volumes:
       - { type: "tmpfs", target: "/var" }
 
-  bfgd:
-    build:
-      dockerfile: "./docker/bfgd/Dockerfile"
-      context: "./.."
-    deploy:
-      restart_policy:
-        condition: "any"
-    depends_on:
-      - "bfgd-postgres"
-      - "electrs"
-    ports:
-      - "8080:8080"
-      - "8383:8383"
-    environment:
-      BFG_POSTGRES_URI: "postgres://postgres@bfgd-postgres:5432/bfg?sslmode=disable"
-      BFG_BTC_START_HEIGHT: "1"
-      BFG_EXBTC_ADDRESS: "electrs:50001"
-      BFG_LOG_LEVEL: "INFO"
-      BFG_PUBLIC_ADDRESS: ":8383"
-      BFG_PRIVATE_ADDRESS: ":8080"
-
-  bssd:
-    build:
-      dockerfile: "./docker/bssd/Dockerfile"
-      context: "./.."
-    depends_on:
-      - "bfgd"
-    ports:
-      - "8081:8081"
-    environment:
-      BSS_BFG_URL: "ws://bfgd:8080/v1/ws/private"
-      BSS_LOG_LEVEL: "INFO"
-      BSS_ADDRESS: ":8081"
-
-  popmd:
-    build:
-      dockerfile: "./docker/popmd/Dockerfile"
-      context: "./.."
-    depends_on:
-      - "bfgd"
-    environment:
-      POPM_BTC_PRIVKEY: "${POPM_BTC_PRIVATE_KEY}"
-      POPM_BFG_URL: "http://bfgd:8383/v1/ws/public"
-      POPM_LOG_LEVEL: "INFO"
-      POPM_REMINE_THRESHOLD: "1"
+ 
 
 volumes:
   l2configs:
