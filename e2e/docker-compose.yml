@@ -9,8 +9,7 @@ services:
   electrs:
     build:
       context: https://github.com/romanz/electrs.git#1d02f10ec38edbc3b7df6b16bb8989d9bc0aaa0f
-    depends_on:
-      - "bitcoind"
+   
     command:
       - electrs
       - --electrum-rpc-addr
