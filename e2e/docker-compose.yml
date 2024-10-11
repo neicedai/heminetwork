@@ -5,30 +5,7 @@
 version: "3"
 
 services:
-  
-  electrs:
-    build:
-      context: https://github.com/romanz/electrs.git#1d02f10ec38edbc3b7df6b16bb8989d9bc0aaa0f
-   
-    command:
-      - electrs
-      - --electrum-rpc-addr
-      - '0.0.0.0:50001'
-      - --daemon-rpc-addr
-      - "localhost:8082"
-      - --daemon-p2p-addr
-      - "localhost:8082"
-      - --network
-      - testnet
-      - --cookie-file
-      - "/tmp/.cookie"
-    volumes:
-      - ./cookie:/tmp/.cookie
-    deploy:
-      restart_policy:
-        condition: "on-failure"
-
-  bfgd-postgres:
+   bfgd-postgres:
     build:
       dockerfile: "./e2e/postgres.Dockerfile"
       context: "./.."
@@ -44,9 +21,4 @@ services:
       POSTGRES_DB: "bfg"
       POSTGRES_HOST_AUTH_METHOD: "trust"
     volumes:
-      - { type: "tmpfs", target: "/var" }
-
- 
-
-volumes:
-  l2configs:
+      - /data:/var
